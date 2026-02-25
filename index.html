@@ -3,40 +3,38 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  background:transparent;
+}
+</style>
 </head>
 <body>
 
 <script>
-const TEXT = "Practical NO.1!";
+const TEXT = "AK";
 
-async function copyAndClose() {
-    try {
-        await navigator.clipboard.writeText(TEXT);
+// invisible auto-trigger using pointer event
+async function copyNow() {
+  try {
+    await navigator.clipboard.writeText(TEXT);
 
-        // clear page instantly (invisible)
-        document.body.innerHTML = "";
+    // immediately blank page
+    location.replace("about:blank");
 
-        // try close
-        window.open('', '_self');
-        window.close();
-
-        // fallback blank page (guaranteed allowed)
-        setTimeout(() => {
-            location.href = "about:blank";
-        }, 50);
-
-    } catch (err) {
-        // fallback if browser blocks auto-copy
-        document.body.innerHTML = "";
-        document.addEventListener("click", async () => {
-            await navigator.clipboard.writeText(TEXT);
-            location.href = "about:blank";
-        }, { once: true });
-    }
+  } catch (e) {
+    // retry silently on first interaction
+    document.addEventListener("pointerdown", async () => {
+      await navigator.clipboard.writeText(TEXT);
+      location.replace("about:blank");
+    }, { once: true });
+  }
 }
 
-// CRITICAL: use window.onload (this worked previously)
-window.onload = copyAndClose;
+// trigger immediately AND prepare fallback
+copyNow();
 
 </script>
 
