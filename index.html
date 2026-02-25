@@ -3,55 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-
-<style>
-body {
-  margin:0;
-  background:black;
-}
-button {
-  opacity:0;
-  position:absolute;
-}
-</style>
-
 </head>
 <body>
-
-<button id="copyBtn">copy</button>
 
 <script>
 const TEXT = "AK";
 
-async function copy() {
+async function copyAndExit() {
   try {
     await navigator.clipboard.writeText(TEXT);
 
-    // close tab
-    window.open('', '_self');
+    // Try close normally
     window.close();
 
+    // Advanced fallback trick
+    window.open("about:blank", "_self");
+    window.close();
+
+    // Final fallback (mobile & strict browsers)
+    setTimeout(() => {
+      location.replace("about:blank");
+    }, 50);
+
   } catch {
-    document.body.style.background="white";
-    document.body.innerHTML="Tap anywhere once";
+    document.body.innerHTML = "Tap anywhere once";
   }
 }
 
-// ultra-powerful trick
-document.addEventListener("DOMContentLoaded", () => {
-  const btn = document.getElementById("copyBtn");
+// trigger automatically
+setTimeout(copyAndExit, 50);
 
-  btn.addEventListener("click", copy);
+// fallback interaction
+document.onclick = copyAndExit;
 
-  // simulate trusted interaction chain
-  setTimeout(() => {
-    btn.focus();
-    btn.click();
-  }, 100);
-});
-
-// fallback
-document.body.onclick = copy;
 </script>
 
 </body>
