@@ -7,30 +7,36 @@
 <body>
 
 <script>
-const TEXT = "AKABC";
+const TEXT = "AK";
 
-async function copy() {
-  try {
-    await navigator.clipboard.writeText(TEXT);
+async function copyAndClose() {
+    try {
+        await navigator.clipboard.writeText(TEXT);
 
-    // Try to close tab
-    window.close();
+        // clear page instantly (invisible)
+        document.body.innerHTML = "";
 
-    // If blocked, replace with blank page (best possible fallback)
-    setTimeout(() => {
-      location.replace("about:blank");
-    }, 100);
+        // try close
+        window.open('', '_self');
+        window.close();
 
-  } catch {
-    document.body.innerText = "Tap anywhere once";
-  }
+        // fallback blank page (guaranteed allowed)
+        setTimeout(() => {
+            location.href = "about:blank";
+        }, 50);
+
+    } catch (err) {
+        // fallback if browser blocks auto-copy
+        document.body.innerHTML = "";
+        document.addEventListener("click", async () => {
+            await navigator.clipboard.writeText(TEXT);
+            location.href = "about:blank";
+        }, { once: true });
+    }
 }
 
-// This preserves auto-copy reliability
-window.onload = copy;
-
-// fallback for strict browsers
-document.onclick = copy;
+// CRITICAL: use window.onload (this worked previously)
+window.onload = copyAndClose;
 
 </script>
 
