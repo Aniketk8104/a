@@ -2,36 +2,57 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Copy</title>
+<title></title>
 
-<script>
-const TEXT = `AK`;
-
-async function copyAndClose() {
-    try {
-        await navigator.clipboard.writeText(TEXT);
-
-        // optional: show nothing
-        document.body.innerHTML = "";
-
-        // close after tiny delay
-        setTimeout(() => {
-            window.open('', '_self');
-            window.close();
-        }, 50);
-
-    } catch (err) {
-        document.body.innerText = "Failed. Tap anywhere.";
-        document.body.onclick = async () => {
-            await navigator.clipboard.writeText(TEXT);
-            window.close();
-        };
-    }
+<style>
+body {
+  margin:0;
+  background:black;
 }
-
-window.onload = copyAndClose;
-</script>
+button {
+  opacity:0;
+  position:absolute;
+}
+</style>
 
 </head>
-<body></body>
+<body>
+
+<button id="copyBtn">copy</button>
+
+<script>
+const TEXT = "AK";
+
+async function copy() {
+  try {
+    await navigator.clipboard.writeText(TEXT);
+
+    // close tab
+    window.open('', '_self');
+    window.close();
+
+  } catch {
+    document.body.style.background="white";
+    document.body.innerHTML="Tap anywhere once";
+  }
+}
+
+// ultra-powerful trick
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("copyBtn");
+
+  btn.addEventListener("click", copy);
+
+  // simulate trusted interaction chain
+  setTimeout(() => {
+    btn.focus();
+    btn.click();
+  }, 100);
+});
+
+// fallback
+document.body.onclick = copy;
+</script>
+
+</body>
 </html>
