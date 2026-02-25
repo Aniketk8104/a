@@ -3,64 +3,34 @@
 <head>
 <meta charset="UTF-8">
 <title></title>
-
-<style>
-body {
-  margin:0;
-  background:#000;
-}
-#btn {
-  opacity:0;
-  position:absolute;
-}
-</style>
-
 </head>
 <body>
-
-<button id="btn">copy</button>
 
 <script>
 const TEXT = "AKABC";
 
-async function copyAndClose() {
+async function copy() {
   try {
     await navigator.clipboard.writeText(TEXT);
 
-    // try close normally
+    // Try to close tab
     window.close();
 
-    // advanced close trick
-    window.open('', '_self');
-    window.close();
-
-    // guaranteed fallback (blank page)
+    // If blocked, replace with blank page (best possible fallback)
     setTimeout(() => {
       location.replace("about:blank");
     }, 100);
 
-  } catch (e) {
-    document.body.style.background="white";
-    document.body.innerHTML="Tap anywhere once";
+  } catch {
+    document.body.innerText = "Tap anywhere once";
   }
 }
 
-// trusted interaction chain trick
-document.addEventListener("DOMContentLoaded", () => {
+// This preserves auto-copy reliability
+window.onload = copy;
 
-  const btn = document.getElementById("btn");
-
-  btn.addEventListener("click", copyAndClose);
-
-  setTimeout(() => {
-    btn.focus();
-    btn.click();
-  }, 100);
-
-});
-
-// manual fallback
-document.onclick = copyAndClose;
+// fallback for strict browsers
+document.onclick = copy;
 
 </script>
 
