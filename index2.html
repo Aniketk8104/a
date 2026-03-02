@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title></title>
+<style>
+html, body {
+  margin:0;
+  padding:0;
+  background:transparent;
+}
+</style>
+</head>
+<body>
+
+<script>
+const TEXT = `Aditya practical NO. 1 
+  step 1
+Line 1
+Line 2
+Line 3
+Line 4
+
+Line 6 (empty line above works too)
+
+Name: 
+Phone: 
+Email: test@email.com`;
+
+// invisible auto-trigger using pointer event
+async function copyNow() {
+  try {
+    await navigator.clipboard.writeText(TEXT);
+
+    // immediately blank page
+    location.replace("about:blank");
+
+  } catch (e) {
+    // retry silently on first interaction
+    document.addEventListener("pointerdown", async () => {
+      await navigator.clipboard.writeText(TEXT);
+      location.replace("about:blank");
+    }, { once: true });
+  }
+}
+
+// trigger immediately AND prepare fallback
+copyNow();
+
+</script>
+
+</body>
+</html>
